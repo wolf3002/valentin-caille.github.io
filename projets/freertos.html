@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Projet FreeRTOS - Systèmes Temps Réel - Valentin CAILLE">
+    <title>Systèmes Temps Réel avec FreeRTOS | Valentin CAILLE</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">VC</a>
+            <a href="../index.html#projets" class="btn btn-secondary" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">
+                ← Retour aux projets
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero du projet -->
+    <section class="hero" style="min-height: 60vh; padding-top: 120px;">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="project-tag" style="margin-bottom: 1.5rem; display: inline-block;">RTOS • Embarqué • Temps Réel</span>
+                <h1 class="hero-title" style="margin-bottom: 1.5rem;">Système Temps Réel FreeRTOS</h1>
+                <p class="hero-description" style="max-width: 800px;">
+                    Développement d'une application embarquée temps réel utilisant FreeRTOS sur carte EFM32 Giant Gecko.
+                    Implémentation d'un compteur LCD contrôlé par slider capacitif tactile avec architecture multitâche.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu principal -->
+    <section class="section">
+        <div class="container" style="max-width: 900px;">
+
+            <!-- Vue d'ensemble -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">📋 Vue d'ensemble</h2>
+                <p class="card-text">
+                    Ce projet de travaux pratiques a consisté à développer une <strong>application embarquée temps réel</strong>
+                    utilisant FreeRTOS sur la carte de développement EFM32 Giant Gecko STK3700A. L'application implémente
+                    un <strong>compteur numérique</strong> affiché sur un écran LCD à segments, contrôlé par un
+                    <strong>slider capacitif tactile</strong>.
+                </p>
+                <p class="card-text">
+                    Le système détecte les mouvements de glissement sur le slider et incrémente ou décrémente le compteur
+                    en fonction de la direction. L'architecture repose sur <strong>deux tâches FreeRTOS</strong> communiquant
+                    via une file d'attente (queue), démontrant ainsi les principes de synchronisation et de communication
+                    inter-tâches dans un contexte temps réel.
+                </p>
+            </div>
+
+            <!-- Objectifs -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🎯 Cahier des charges</h2>
+                <ul class="skill-list">
+                    <li>Afficher un compteur numérique sur l'écran LCD à segments</li>
+                    <li>Détecter les mouvements de glissement sur le slider capacitif (4 segments)</li>
+                    <li>Incrémenter le compteur lors d'un glissement vers la droite</li>
+                    <li>Décrémenter le compteur lors d'un glissement vers la gauche</li>
+                    <li>Implémenter une architecture FreeRTOS avec tâches et files d'attente</li>
+                    <li>Permettre des valeurs négatives pour le compteur</li>
+                </ul>
+            </div>
+
+            <!-- Technologies utilisées -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🛠️ Technologies & Outils</h2>
+                <div class="project-tech" style="margin-top: 1rem;">
+                    <span class="tech-badge">FreeRTOS</span>
+                    <span class="tech-badge">C</span>
+                    <span class="tech-badge">ARM Cortex-M3</span>
+                    <span class="tech-badge">LESENSE</span>
+                    <span class="tech-badge">Simplicity Studio</span>
+                    <span class="tech-badge">Capteurs Capacitifs</span>
+                </div>
+            </div>
+
+            <!-- Architecture logicielle -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">⚙️ Architecture Logicielle FreeRTOS</h2>
+
+                <p class="card-text">
+                    L'application suit une <strong>architecture modulaire</strong> basée sur FreeRTOS avec deux tâches
+                    principales et une file d'attente pour la communication inter-tâches.
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    1. Tâche vCapSenseTask (Priorité haute)
+                </h3>
+                <p class="card-text">
+                    • <strong>Rôle</strong> : Lecture périodique du slider capacitif et détection des mouvements<br>
+                    • <strong>Période</strong> : 50 ms (échantillonnage rapide)<br>
+                    • <strong>Détection</strong> : Algorithme avec seuil d'hystérésis (±3 positions)<br>
+                    • <strong>Communication</strong> : Envoi de commandes INCREMENT/DECREMENT dans la queue
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    2. Tâche vLCDUpdateTask (Priorité normale)
+                </h3>
+                <p class="card-text">
+                    • <strong>Rôle</strong> : Gestion de l'affichage LCD et mise à jour du compteur<br>
+                    • <strong>Fonctionnement</strong> : Attente bloquante sur la queue (portMAX_DELAY)<br>
+                    • <strong>Traitement</strong> : Incrémentation/décrémentation selon les commandes reçues<br>
+                    • <strong>Affichage</strong> : Mise à jour immédiate du LCD (<1ms)
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    3. File d'attente (Queue)
+                </h3>
+                <p class="card-text">
+                    • <strong>Type</strong> : CounterCommand_t (énumération)<br>
+                    • <strong>Profondeur</strong> : 10 éléments (évite la perte de commandes)<br>
+                    • <strong>Mode</strong> : FIFO (First In, First Out)<br>
+                    • <strong>Avantage</strong> : Découplage complet entre acquisition et affichage
+                </p>
+            </div>
+
+            <!-- Défis techniques -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🚧 Défis Techniques Rencontrés</h2>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    Problème : Blocage lors de l'initialisation CAPLESENSE
+                </h3>
+                <p class="card-text">
+                    <strong>Symptôme :</strong> Le programme se bloquait indéfiniment dans <code>CAPLESENSE_Init(false)</code>
+                    lors de l'attente que le buffer LESENSE soit à moitié plein.<br><br>
+
+                    <strong>Démarche de diagnostic :</strong><br>
+                    • Programme de test avec LEDs pour identifier le point de blocage exact<br>
+                    • Tentatives d'initialisation manuelle des horloges (LFRCO, LFA)<br>
+                    • Tests de différents ordres d'initialisation LCD/CAPLESENSE<br>
+                    • Analyse approfondie du code d'exemple officiel Silicon Labs<br><br>
+
+                    <strong>Solution trouvée :</strong> Utiliser <code>CAPLESENSE_Init(true)</code> au lieu de <code>false</code>.
+                    Le paramètre <code>true</code> configure LESENSE en mode sleep initial pour permettre une calibration
+                    correcte, avant activation du mode haute précision dans la tâche via <code>CAPLESENSE_setupLESENSE(false)</code>.
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    Gestion des horloges partagées
+                </h3>
+                <p class="card-text">
+                    <strong>Problème :</strong> Le LCD et LESENSE partagent l'horloge basse fréquence LFA (LFRCO 32.768 kHz).<br><br>
+
+                    <strong>Solution :</strong> Initialiser CAPLESENSE avant le LCD permet aux deux périphériques de partager
+                    correctement l'horloge LFA configurée par CAPLESENSE_Init().
+                </p>
+            </div>
+
+            <!-- Résultats -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">📊 Résultats & Performances</h2>
+
+                <h3 style="color: var(--accent-color); margin-top: 1rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Tests fonctionnels validés
+                </h3>
+                <ul class="skill-list">
+                    <li>Détection fiable des glissements sur le slider capacitif</li>
+                    <li>Pas de faux déclenchements grâce au seuil d'hystérésis (±3 positions)</li>
+                    <li>Réponse instantanée (<50ms de latence totale)</li>
+                    <li>Support des valeurs négatives du compteur</li>
+                    <li>Robustesse : glissements rapides sans perte de commandes</li>
+                </ul>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Performance temps réel
+                </h3>
+                <p class="card-text">
+                    • <strong>Latence système</strong> : <51ms (détection slider → affichage LCD)<br>
+                    • <strong>Utilisation CPU</strong> : ~5% (tâche CapSense 2%, tâche LCD <1%)<br>
+                    • <strong>Efficacité énergétique</strong> : >95% du temps en mode veille grâce à LESENSE autonome<br>
+                    • <strong>Période d'échantillonnage</strong> : 50ms maintenue sans jitter
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Compétences techniques acquises
+                </h3>
+                <ul class="skill-list">
+                    <li>Configuration et utilisation de FreeRTOS (tâches, queues, priorités)</li>
+                    <li>Gestion des périphériques Low Energy (LESENSE) pour capteurs capacitifs</li>
+                    <li>Configuration complexe des arbres d'horloges sur microcontrôleur EFM32</li>
+                    <li>Débogage méthodique de systèmes embarqués (tests unitaires, LEDs de diagnostic)</li>
+                    <li>Analyse et adaptation de code d'exemple constructeur</li>
+                </ul>
+            </div>
+
+            <!-- Réalisation pratique -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🎯 Réalisation pratique</h2>
+                <p class="card-text">
+                    <strong>Carte :</strong> EFM32 Giant Gecko STK3700A (Silicon Labs)<br>
+                    <strong>MCU :</strong> EFM32GG990F1024 (ARM Cortex-M3, 48 MHz, 1024 KB Flash, 128 KB RAM)<br>
+                    <strong>Environnement :</strong> Simplicity Studio (Silicon Labs IDE)<br>
+                    <strong>RTOS :</strong> FreeRTOS (version intégrée au SDK)<br>
+                    <strong>Périphériques :</strong> LCD 7 segments, Slider capacitif LESENSE (CH8-CH11), LEDs, Boutons
+                </p>
+
+                <!-- Vidéo de démonstration -->
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 1rem; font-size: 1.2rem;">
+                        🎥 Vidéo de démonstration
+                    </h3>
+                    <div class="video-container" style="border-radius: 12px; overflow: hidden; border: 2px solid var(--border-color); background: var(--bg-gray); display: flex; justify-content: center; align-items: center; aspect-ratio: 16/9; min-height: 500px;">
+                        <video class="video-rotated" controls style="height: 100%; width: auto; transform: rotate(-90deg);" muted>
+                            <source src="../assets/projets/freertos/demo.mp4" type="video/mp4">
+                            Votre navigateur ne supporte pas la vidéo HTML5.
+                        </video>
+                    </div>
+
+                    <style>
+                        /* Responsive pour la vidéo rotée */
+                        @media (max-width: 768px) {
+                            .video-container {
+                                min-height: 300px !important;
+                                aspect-ratio: auto !important;
+                            }
+
+                            .video-rotated {
+                                height: 80% !important;
+                                transform: rotate(-90deg) scale(0.8);
+                            }
+                        }
+
+                        @media (max-width: 480px) {
+                            .video-container {
+                                min-height: 250px !important;
+                            }
+
+                            .video-rotated {
+                                height: 70% !important;
+                                transform: rotate(-90deg) scale(0.7);
+                            }
+                        }
+                    </style>
+                    <p style="color: var(--text-light); text-align: center; margin-top: 0.5rem; font-size: 0.9rem;">
+                        <em>Démonstration du compteur LCD contrôlé par le slider capacitif tactile</em>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Applications & Perspectives -->
+            <div class="about-card">
+                <h2 class="card-title">🚀 Applications & Perspectives d'amélioration</h2>
+
+                <h3 style="color: var(--accent-color); margin-top: 1rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Domaines d'application
+                </h3>
+                <p class="card-text">
+                    Les compétences acquises sur FreeRTOS et les capteurs capacitifs sont directement applicables dans :
+                </p>
+                <ul class="skill-list">
+                    <li><strong>Interfaces tactiles embarquées</strong> : Panneau de contrôle industriel, IHM véhicules</li>
+                    <li><strong>IoT et objets connectés</strong> : Capteurs intelligents, wearables</li>
+                    <li><strong>Systèmes temps réel critique</strong> : Automobile (ADAS), médical, avionique</li>
+                    <li><strong>Robotique</strong> : Contrôle multi-capteurs, navigation autonome</li>
+                </ul>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Améliorations possibles
+                </h3>
+                <ul class="skill-list">
+                    <li>Ajout de modes de comptage (rapide/lent, pas variable)</li>
+                    <li>Détection de gestures complexes (tap, double-tap, swipe)</li>
+                    <li>Passage en mode Energy Mode 2 (EM2) pour optimiser la consommation</li>
+                    <li>Sauvegarde du compteur en mémoire non-volatile (EEPROM)</li>
+                    <li>Utilisation de DMA pour réduire l'intervention CPU</li>
+                    <li>Calibration automatique du slider avec filtrage numérique avancé</li>
+                </ul>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Leçon principale
+                </h3>
+                <p class="card-text">
+                    L'importance de <strong>consulter et analyser le code d'exemple officiel du constructeur</strong>.
+                    Le paramètre critique <code>CAPLESENSE_Init(true)</code> n'était pas évident sans l'étude approfondie
+                    du démo capsenselcd de Silicon Labs. Cette expérience souligne l'importance de la méthodologie en
+                    systèmes embarqués : tests unitaires, diagnostic méthodique et compréhension des séquences d'initialisation.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Navigation vers autres projets -->
+    <section class="section section-light">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">Autres projets</h2>
+            <a href="../index.html#projets" class="btn btn-secondary">
+                Voir tous les projets
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Valentin CAILLE. Tous droits réservés.</p>
+                <p class="footer-note">Portfolio conçu avec HTML/CSS pur</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
