@@ -1,0 +1,14 @@
+# Robots.txt - Valentin CAILLE Portfolio
+
+User-agent: *
+Allow: /
+Disallow: /.git/
+Disallow: /.claude/
+Disallow: /js/
+Disallow: /css/
+
+# Sitemap
+Sitemap: https://wolf3002.github.io/valentin-caille.github.io/sitemap.xml
+
+# Crawl delay (optional, good practice)
+Crawl-delay: 10

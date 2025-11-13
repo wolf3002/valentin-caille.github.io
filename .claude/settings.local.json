@@ -7,7 +7,12 @@
       "Bash(python -m http.server:*)",
       "Bash(git --version:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit - Portfolio professionnel\n\n- Site portfolio HTML/CSS pur (responsive)\n- Page d''accueil avec sections: À propos, Compétences, Formation, Expérience, Projets, Contact\n- Page détail projet FreeRTOS avec démonstration vidéo\n- Design professionnel avec animations\n- Navigation mobile avec menu hamburger\n- Optimisé pour tous les appareils\n\n🤖 Generated with Claude Code\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
