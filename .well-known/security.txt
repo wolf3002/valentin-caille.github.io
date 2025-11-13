@@ -3,10 +3,10 @@
 Contact: mailto:valentincaille3002@gmail.com
 Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: fr, en
-Canonical: https://wolf3002.github.io/valentin-caille.github.io/.well-known/security.txt
+Canonical: https://valentin-caille-github-io.vercel.app/.well-known/security.txt
 
 # Security Acknowledgments
-Acknowledgments: https://wolf3002.github.io/valentin-caille.github.io/
+Acknowledgments: https://valentin-caille-github-io.vercel.app/
 
 # Policy
 Policy: This is a personal portfolio website. If you discover any security issues, please report them via email.

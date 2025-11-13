@@ -1,9 +1,10 @@
 # Portfolio Professionnel - Valentin CAILLE
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-Online-success)](https://wolf3002.github.io/valentin-caille.github.io/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Online-success)](https://valentin-caille-github-io.vercel.app)
 [![HTML](https://img.shields.io/badge/HTML-5-orange)](https://developer.mozilla.org/fr/docs/Web/HTML)
 [![CSS](https://img.shields.io/badge/CSS-3-blue)](https://developer.mozilla.org/fr/docs/Web/CSS)
 [![Responsive](https://img.shields.io/badge/Responsive-Yes-brightgreen)]()
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://vercel.com)
 
 ## 📌 À propos
 
@@ -13,7 +14,7 @@ Portfolio professionnel présentant mon parcours en systèmes embarqués, mes co
 
 ## 🌐 Voir le portfolio
 
-👉 **[valentin-caille.github.io](https://wolf3002.github.io/valentin-caille.github.io/)**
+👉 **[valentin-caille-github-io.vercel.app](https://valentin-caille-github-io.vercel.app)**
 
 ## 🛠️ Technologies utilisées
 
