@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Générateur DDS FPGA - Synthèse Numérique Directe sur Nexys A7-100T - Valentin CAILLE">
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; media-src 'self'; connect-src 'self';">
+
+    <title>Générateur DDS FPGA - Synthèse Numérique Directe | Valentin CAILLE</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">VC</a>
+            <a href="../index.html#projets" class="btn btn-secondary" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">
+                ← Retour aux projets
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero du projet -->
+    <section class="hero" style="min-height: 60vh; padding-top: 120px;">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="project-tag" style="margin-bottom: 1.5rem; display: inline-block;">FPGA • VHDL • DDS • Traitement du Signal</span>
+                <h1 class="hero-title" style="margin-bottom: 1.5rem;">Générateur de Signaux Sinusoïdaux sur FPGA</h1>
+                <p class="hero-description" style="max-width: 800px;">
+                    Conception et implémentation d'un générateur sinusoïdal à fréquence variable (10 Hz – 163,84 kHz)
+                    sur FPGA Nexys A7-100T (AMD Artix-7). Étude comparative de quatre architectures, de la division
+                    d'horloge naïve à la synthèse numérique directe (DDS) avec accumulateur de phase 48 bits,
+                    atteignant une précision de 3,55 × 10⁻⁷ Hz.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu principal -->
+    <section class="section">
+        <div class="container" style="max-width: 900px;">
+
+            <!-- Vue d'ensemble -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">📋 Vue d'ensemble</h2>
+                <p class="card-text">
+                    Ce projet de <strong>Master 2 Systèmes Embarqués (INSSET)</strong> explore la génération de signaux
+                    sinusoïdaux à fréquence programmable sur FPGA, problème fondamental en instrumentation électronique
+                    et traitement du signal. À partir d'un simple diviseur d'horloge, le projet démontre par une
+                    <strong>analyse mathématique rigoureuse</strong> pourquoi les approches naïves sont intrinsèquement
+                    limitées en précision, et comment l'architecture <strong>DDS (Direct Digital Synthesis)</strong>
+                    résout ces limitations.
+                </p>
+                <p class="card-text">
+                    Quatre architectures sont conçues, implémentées en VHDL et validées expérimentalement sur oscilloscope
+                    numérique Rigol. La progression pédagogique va de la division entière (erreur 22% à 80 kHz) jusqu'au
+                    DDS avec accumulateur de phase 48 bits (erreur &lt; 0,004 Hz), soit <strong>7 ordres de grandeur
+                    d'amélioration</strong>. La Phase 4 démontre qu'un DDS complet peut être réalisé <strong>sans
+                    écrire une seule ligne de code HDL</strong> grâce aux blocs IP Xilinx.
+                </p>
+            </div>
+
+            <!-- Cahier des charges -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🎯 Cahier des charges</h2>
+                <p class="card-text">
+                    <strong>Fréquence de sortie :</strong> f<sub>out</sub> = 10 × (1 + SW) Hz, avec SW ∈ [0, 16 383]<br>
+                    <strong>Plage :</strong> 10 Hz à 163 840 Hz, pas de 10 Hz<br>
+                    <strong>Contrôle :</strong> 14 interrupteurs binaires (switches)<br>
+                    <strong>Sortie :</strong> Signal analogique via DAC 8 bits R-2R sur port Pmod JA<br>
+                    <strong>Horloge système :</strong> f<sub>clk</sub> = 100 MHz<br>
+                    <strong>Cible :</strong> Nexys A7-100T (AMD Artix-7 XC7A100T-1CSG324C)
+                </p>
+            </div>
+
+            <!-- Technologies utilisées -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🛠️ Technologies & Outils</h2>
+                <div class="project-tech" style="margin-top: 1rem;">
+                    <span class="tech-badge">VHDL</span>
+                    <span class="tech-badge">Vivado</span>
+                    <span class="tech-badge">AMD Artix-7</span>
+                    <span class="tech-badge">Block Design (IP)</span>
+                    <span class="tech-badge">DSP48E1</span>
+                    <span class="tech-badge">BRAM</span>
+                    <span class="tech-badge">DAC R-2R</span>
+                    <span class="tech-badge">DDS</span>
+                    <span class="tech-badge">Oscilloscope Rigol</span>
+                    <span class="tech-badge">Traitement du signal</span>
+                </div>
+            </div>
+
+            <!-- Les 4 phases -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">⚙️ Progression en 4 phases</h2>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    Phase 1 — Générateur à Fréquence Fixe (1 kHz)
+                </h3>
+                <p class="card-text">
+                    Validation de l'architecture de base : diviseur d'horloge → compteur 8 bits → table sinusoïdale ROM
+                    256×8 → registre DAC. Le diviseur M = ⌊100 MHz / (256 × 1 kHz)⌋ = 390 donne f<sub>réelle</sub> = 999,36 Hz
+                    (erreur 0,06%). Cette phase valide le principe de génération par table de correspondance.<br><br>
+                    • ROM 256 échantillons 8 bits (valeurs [0, 255])<br>
+                    • DAC R-2R sur Pmod JA : résolution ΔV ≈ 12,9 mV<br>
+                    • Signal mesuré à ≈ 999 Hz sur oscilloscope
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    Phase 2 — Fréquence Variable par Division d'Horloge
+                </h3>
+                <p class="card-text">
+                    Extension avec diviseur M variable selon les switches. Analyse mathématique démontrant la limitation
+                    fondamentale : l'erreur relative est <strong>bornée par 1/M</strong>, donc croît inexorablement avec
+                    la fréquence. À 80 kHz, M ≈ 4 → erreur de 22%. À 100 kHz, M = 3 → erreur de 28%.<br><br>
+                    • <strong>Arithmétique virgule fixe (K = 1024)</strong> : réduit l'erreur d'un facteur ×1130,
+                    mais ne résout pas le problème fondamental<br>
+                    • Jitter d'échantillonnage inhérent à la méthode (raies parasites)<br>
+                    • Limitation structurelle inévitable : seul un changement de paradigme peut résoudre
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    Phase 3 — DDS en VHDL pur (Accumulateur de phase 48 bits)
+                </h3>
+                <p class="card-text">
+                    L'architecture DDS remplace la division par une <strong>accumulation de phase</strong> :
+                    φ[n+1] = (φ[n] + Δφ) mod 2<sup>48</sup>. Le pas de phase Δφ = (1 + SW) × K<sub>DDS</sub>
+                    avec K<sub>DDS</sub> = 28 147 497 donne une erreur constante de 0,000002%,
+                    indépendante de la fréquence.<br><br>
+                    • <strong>Pipeline 5 étages @ 100 MHz :</strong> anti-rebond (21 ms) → multiplication DSP48 →
+                    accumulateur 48 bits → table sinus → registre DAC<br>
+                    • Résolution fréquentielle : Δf = 100 MHz / 2<sup>48</sup> ≈ <strong>3,55 × 10⁻⁷ Hz</strong><br>
+                    • Ressources FPGA : 123 LUTs (0,19%), 1 DSP48, 0,5 BRAM — design extrêmement compact<br>
+                    • Module VHDL autonome (~200 lignes), zéro IP externe
+                </p>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.3rem;">
+                    Phase 4 — DDS en Block Design (100% Blocs IP Xilinx)
+                </h3>
+                <p class="card-text">
+                    Démonstration qu'un DDS complet peut être réalisé <strong>sans une seule ligne de code HDL</strong>,
+                    en utilisant exclusivement des blocs IP Xilinx. L'idée clé : remplacer la multiplication temps réel
+                    par une <strong>table de 16 384 pas de phase pré-calculés</strong> stockée en BRAM (.coe).<br><br>
+                    • <strong>5 blocs IP :</strong> Block Memory Generator (BRAM Δφ 16384×48 bits) → Accumulator
+                    (c_accum 48 bits) → Slice (8 MSB) → Block Memory Generator (ROM sinus 256×8) → Constant<br>
+                    • Arrondi individuel par fréquence → erreur bornée à 1,78 × 10⁻⁷ Hz (amélioration ×42 000
+                    aux hautes fréquences vs Phase 3)<br>
+                    • Ressources : 95 LUTs, 22 BRAMs (16,3%), 0 DSP48
+                </p>
+            </div>
+
+            <!-- Défis & Solutions -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🚧 Défis & Solutions</h2>
+
+                <p class="card-text">
+                    <strong>Défi 1 — Mémoire insuffisante pour l'approche purement mémorielle :</strong><br>
+                    Stocker 16 384 fréquences sous forme de 256 échantillons chacune nécessiterait 32 768 Kb,
+                    soit 6,7 fois la BRAM disponible sur la Nexys A7-100T.<br>
+                    <strong>Solution :</strong> Stocker uniquement le pas de phase Δφ (48 bits) au lieu des
+                    256 échantillons (2 048 bits) → facteur de compression de <strong>43</strong>.
+                </p>
+
+                <p class="card-text" style="margin-top: 1rem;">
+                    <strong>Défi 2 — Choix de la largeur d'accumulateur :</strong><br>
+                    Un accumulateur 32 bits donne Δf = 0,023 Hz (erreur visible à l'oscilloscope).
+                    Un accumulateur 64 bits est surdimensionné (Δf = 5,4 × 10⁻¹² Hz).<br>
+                    <strong>Solution :</strong> Accumulateur <strong>48 bits</strong> retenu — résolution
+                    3,55 × 10⁻⁷ Hz, compatible DSP48E1 Artix-7 (multiplieur 25×18 bits, accumulateur 48 bits).
+                </p>
+
+                <p class="card-text" style="margin-top: 1rem;">
+                    <strong>Défi 3 — Précision de mesure limitée par l'oscilloscope :</strong><br>
+                    À 163,84 kHz, l'écart apparent de 660 Hz (0,4%) est dû à l'incertitude temporelle de
+                    l'oscilloscope (∼0,01%), non au DDS.<br>
+                    <strong>Conclusion :</strong> L'erreur réelle du DDS (&lt; 0,004 Hz) est <strong>7 ordres
+                    de grandeur</strong> en dessous de la résolution de l'instrument de mesure.
+                </p>
+            </div>
+
+            <!-- Résultats -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">📊 Résultats & Performances</h2>
+
+                <h3 style="color: var(--accent-color); margin-top: 1rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Comparaison des quatre architectures
+                </h3>
+
+                <div style="overflow-x: auto; margin-top: 1rem;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background: var(--bg-gray);">
+                                <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid var(--border-color);">Critère</th>
+                                <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--border-color);">Phase 1</th>
+                                <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--border-color);">Phase 2</th>
+                                <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--border-color); color: var(--accent-color);">Phase 3</th>
+                                <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--border-color); color: var(--accent-color);">Phase 4</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color);">Méthode</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">Diviseur</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">Div. Virgule fixe</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center; font-weight: 600;">DDS VHDL</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center; font-weight: 600;">DDS IP</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color);">Erreur max</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0,1%</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0,017%</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center; color: var(--accent-color); font-weight: 600;">0,000002%</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center; color: var(--accent-color); font-weight: 600;">10⁻⁷ Hz</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color);">LUT</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">—</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">—</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">123 (0,19%)</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">95 (0,15%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color);">DSP48</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">1 (0,42%)</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color);">BRAM</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">0,5 (0,37%)</td>
+                                <td style="padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-color); text-align: center;">22 (16,3%)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.6rem 0.75rem;">Code VHDL</td>
+                                <td style="padding: 0.6rem 0.75rem; text-align: center;">~100 lig.</td>
+                                <td style="padding: 0.6rem 0.75rem; text-align: center;">~150 lig.</td>
+                                <td style="padding: 0.6rem 0.75rem; text-align: center;">~200 lig.</td>
+                                <td style="padding: 0.6rem 0.75rem; text-align: center; font-weight: 600; color: var(--accent-color);">0 ligne</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: var(--accent-color); margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Mesures expérimentales (Phase 3 & 4 — oscilloscope Rigol)
+                </h3>
+                <ul class="skill-list">
+                    <li>10 kHz (SW = 999) : f<sub>mesurée</sub> = 10 000 Hz — <strong>Écart : 0 Hz (0,00%)</strong></li>
+                    <li>100 kHz (SW = 9 999) : f<sub>mesurée</sub> = 100 000 Hz — <strong>Écart : 0 Hz (0,00%)</strong></li>
+                    <li>163,84 kHz (SW = 16 383) : Écart apparent 660 Hz (0,40%) — dû à l'oscilloscope, pas au DDS</li>
+                    <li>Erreur réelle DDS à toutes fréquences : <strong>&lt; 0,004 Hz</strong> — 7 ordres de grandeur sous la résolution de l'oscilloscope</li>
+                    <li>Résolution théorique atteinte : <strong>3,55 × 10⁻⁷ Hz</strong> (5 ordres supérieure à l'AD9851 commercial)</li>
+                </ul>
+
+                <!-- Bannière performance -->
+                <div style="margin-top: 2rem; padding: 1.25rem; background: var(--bg-gray); border-radius: 12px; border-left: 4px solid var(--accent-color);">
+                    <p style="color: var(--text-color); font-size: 0.95rem; margin: 0; line-height: 1.6;">
+                        ⚡ <strong style="color: var(--accent-color);">Performances validées expérimentalement :</strong>
+                        Accumulateur de phase <strong>48 bits @ 100 MHz</strong> — résolution fréquentielle
+                        <strong>3,55 × 10⁻⁷ Hz</strong> — plage complète <strong>10 Hz à 163,84 kHz</strong>
+                        en 16 384 pas de 10 Hz — erreur constante <strong>&lt; 0,000002%</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Réalisation pratique & Galerie oscilloscope -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🎯 Réalisation pratique</h2>
+                <p class="card-text">
+                    <strong>Plateforme :</strong> Nexys A7-100T (AMD Artix-7 XC7A100T, 63 400 LUTs, 240 DSP48E1, 4 860 Kb BRAM)<br>
+                    <strong>Environnement :</strong> Vivado 2024 (synthèse VHDL + Block Design graphique)<br>
+                    <strong>DAC :</strong> R-2R 8 bits sur Pmod JA — V<sub>ref</sub> = 3,3 V, résolution 12,9 mV<br>
+                    <strong>Mesures :</strong> Oscilloscope numérique Rigol (mode Auto Measure)<br>
+                    <strong>Contexte :</strong> Projet Master 2 INSSET — Module Systèmes Embarqués / FPGA
+                </p>
+
+                <!-- Galerie oscilloscope -->
+                <div style="margin-top: 2rem;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 1rem; font-size: 1.2rem;">
+                        📸 Captures d'oscilloscope
+                    </h3>
+
+                    <!-- Phase 3 -->
+                    <h4 style="color: var(--text-light); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.1rem;">
+                        🔷 Phase 3 — DDS VHDL
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+                        <div style="background: var(--bg-gray); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <img src="../assets/projets/fpga-dds/phase3_10khz.jpg"
+                                 alt="Phase 3 - Oscilloscope 10 kHz"
+                                 style="width: 100%; border-radius: 8px; margin-bottom: 0.5rem;"
+                                 onerror="this.parentElement.innerHTML='<p style=\'color:var(--text-light);padding:2rem;font-size:0.9rem;\'>📷<br><strong>f = 10 kHz</strong><br>SW = 999<br><small>Photo à ajouter</small></p>'">
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
+                                <strong style="color: var(--accent-color);">f = 10 kHz</strong> — Période 100 µs<br>
+                                <small>SW = 999 · Erreur mesurée : 0 Hz</small>
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-gray); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <img src="../assets/projets/fpga-dds/phase3_100khz.jpg"
+                                 alt="Phase 3 - Oscilloscope 100 kHz"
+                                 style="width: 100%; border-radius: 8px; margin-bottom: 0.5rem;"
+                                 onerror="this.parentElement.innerHTML='<p style=\'color:var(--text-light);padding:2rem;font-size:0.9rem;\'>📷<br><strong>f = 100 kHz</strong><br>SW = 10 000<br><small>Photo à ajouter</small></p>'">
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
+                                <strong style="color: var(--accent-color);">f = 100 kHz</strong> — Période 10 µs<br>
+                                <small>SW = 10 000 · Écart mesuré : 10 Hz (0,01%)</small>
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-gray); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <img src="../assets/projets/fpga-dds/phase3_163khz.jpg"
+                                 alt="Phase 3 - Oscilloscope 163,84 kHz"
+                                 style="width: 100%; border-radius: 8px; margin-bottom: 0.5rem;"
+                                 onerror="this.parentElement.innerHTML='<p style=\'color:var(--text-light);padding:2rem;font-size:0.9rem;\'>📷<br><strong>f = 163,84 kHz</strong><br>SW = 16 383<br><small>Photo à ajouter</small></p>'">
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
+                                <strong style="color: var(--accent-color);">f = 163,84 kHz</strong> — Période 6,1 µs<br>
+                                <small>SW = 16 383 · Fréquence max</small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Phase 4 -->
+                    <h4 style="color: var(--text-light); margin-top: 2rem; margin-bottom: 0.75rem; font-size: 1.1rem;">
+                        🔶 Phase 4 — DDS 100% IP Xilinx (Block Design)
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: var(--bg-gray); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <img src="../assets/projets/fpga-dds/phase4_10khz.jpg"
+                                 alt="Phase 4 - Oscilloscope 10 kHz"
+                                 style="width: 100%; border-radius: 8px; margin-bottom: 0.5rem;"
+                                 onerror="this.parentElement.innerHTML='<p style=\'color:var(--text-light);padding:2rem;font-size:0.9rem;\'>📷<br><strong>f = 10 kHz</strong><br>SW = 999<br><small>Photo à ajouter</small></p>'">
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
+                                <strong style="color: var(--accent-color);">f = 10 kHz</strong> — Période 100 µs<br>
+                                <small>SW = 999 · Sinusoïde plus lisse (sans rebonds)</small>
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-gray); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <img src="../assets/projets/fpga-dds/phase4_100khz.jpg"
+                                 alt="Phase 4 - Oscilloscope 100 kHz"
+                                 style="width: 100%; border-radius: 8px; margin-bottom: 0.5rem;"
+                                 onerror="this.parentElement.innerHTML='<p style=\'color:var(--text-light);padding:2rem;font-size:0.9rem;\'>📷<br><strong>f = 100 kHz</strong><br>SW = 9 999<br><small>Photo à ajouter</small></p>'">
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
+                                <strong style="color: var(--accent-color);">f = 100 kHz</strong> — Période 10 µs<br>
+                                <small>SW = 9 999 · Erreur mesurée : 0 Hz (0,00%)</small>
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-gray); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <img src="../assets/projets/fpga-dds/phase4_163khz.jpg"
+                                 alt="Phase 4 - Oscilloscope 163,84 kHz"
+                                 style="width: 100%; border-radius: 8px; margin-bottom: 0.5rem;"
+                                 onerror="this.parentElement.innerHTML='<p style=\'color:var(--text-light);padding:2rem;font-size:0.9rem;\'>📷<br><strong>f = 163,84 kHz</strong><br>SW = 16 383<br><small>Photo à ajouter</small></p>'">
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0;">
+                                <strong style="color: var(--accent-color);">f = 163,84 kHz</strong> — Période 6,1 µs<br>
+                                <small>SW = 16 383 · Fréquence max</small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <p style="color: var(--text-light); font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">
+                        💡 Pour ajouter les photos : déposer les captures oscilloscope dans
+                        <code>assets/projets/fpga-dds/</code> avec les noms indiqués ci-dessus.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Compétences démontrées -->
+            <div class="about-card" style="margin-bottom: 3rem;">
+                <h2 class="card-title">🎓 Compétences démontrées</h2>
+                <ul class="skill-list">
+                    <li>Conception VHDL synthétisable sur Artix-7 (Vivado)</li>
+                    <li>Architecture DDS : accumulateur de phase, table sinusoïdale ROM, pipeline synchrone</li>
+                    <li>Analyse mathématique rigoureuse d'erreurs de quantification et de division</li>
+                    <li>Utilisation des blocs IP Xilinx (BRAM, Accumulateur, Slice) en Block Design graphique</li>
+                    <li>Optimisation ressources FPGA (DSP48E1, BRAM vs LUT)</li>
+                    <li>Validation expérimentale sur oscilloscope numérique Rigol</li>
+                    <li>Génération de fichiers .coe pour initialisation mémoire (Python)</li>
+                    <li>Conception de DAC R-2R 8 bits sur port Pmod LVCMOS33</li>
+                </ul>
+            </div>
+
+            <!-- Applications & Perspectives -->
+            <div class="about-card">
+                <h2 class="card-title">🚀 Applications & Perspectives</h2>
+
+                <h3 style="color: var(--accent-color); margin-top: 1rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Domaines d'application du DDS
+                </h3>
+                <ul class="skill-list">
+                    <li><strong>Instrumentation électronique :</strong> Générateur de signaux de test, analyseur de spectre</li>
+                    <li><strong>Télécommunications :</strong> Modulation FM/AM, synthèse de porteuse</li>
+                    <li><strong>Traitement du signal embarqué :</strong> Génération de références pour PLL, démodulation</li>
+                    <li><strong>Médical :</strong> Générateurs ultrasonores, stimulateurs</li>
+                    <li><strong>Robotique :</strong> Commande moteur à fréquence variable</li>
+                </ul>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Améliorations possibles
+                </h3>
+                <ul class="skill-list">
+                    <li>Extension à plusieurs formes d'onde (carré, triangulaire, dent de scie)</li>
+                    <li>Interface SPI/UART pour contrôle dynamique depuis PC</li>
+                    <li>DAC externe haute résolution (12-16 bits) pour améliorer le SFDR</li>
+                    <li>Filtre anti-aliasing analogique en sortie</li>
+                    <li>Modulation de fréquence (FM) ou de phase (PM) en temps réel</li>
+                </ul>
+
+                <h3 style="color: var(--accent-color); margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.2rem;">
+                    Leçons apprises
+                </h3>
+                <p class="card-text">
+                    <strong>Changer de paradigme :</strong> La division d'horloge, intuitive et simple, est
+                    fondamentalement limitée. L'accumulateur de phase — une simple addition répétée — offre
+                    7 ordres de grandeur de précision supplémentaire.<br><br>
+                    <strong>Ressources FPGA :</strong> Un design DDS complet n'utilise que 0,19% des LUTs
+                    disponibles. La richesse du FPGA (DSP48, BRAM) permet des architectures très efficaces.<br><br>
+                    <strong>L'instrument limite la mesure :</strong> La précision du DDS dépasse celle de
+                    l'oscilloscope de laboratoire — facteur limitant à identifier pour ne pas confondre
+                    erreur du générateur et erreur de mesure.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Navigation vers autres projets -->
+    <section class="section section-light">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">Autres projets</h2>
+            <a href="../index.html#projets" class="btn btn-secondary">
+                Voir tous les projets
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 Valentin CAILLE. Tous droits réservés.</p>
+                <p class="footer-note">Portfolio développé en HTML/CSS pur • Hébergé sur Vercel</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
